@@ -93,8 +93,13 @@ function inViewDirective ($parse) {
         }
         viewportRect = offsetRect(viewportRect, options.viewportOffset);
         var elementRect = offsetRect(element[0].getBoundingClientRect(), options.offset);
+        var inView = intersectRect(elementRect, viewportRect);
+
+        if (inView && options.requireOffsetParent) {
+          inView = element[0].offsetParent !== null;
+        }
         var info = {
-          inView: intersectRect(elementRect, viewportRect),
+          inView: inView,
           event: event,
           element: element,
           elementRect: elementRect,

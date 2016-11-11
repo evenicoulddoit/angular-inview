@@ -302,6 +302,79 @@ describe("angular-inview", function() {
 
 	});
 
+	describe("requiring an offsetParent", function() {
+		it("should trigger for visible elements as normal", function(done) {
+			makeTestForHtml(
+				'<div in-view="spy($inview)" ' +
+				'     in-view-options="{requireOffsetParent: true}">' +
+				'</div>'
+			)
+			.then(function (test) {
+				expect(test.spy.calls.count()).toBe(1);
+				expect(test.spy).toHaveBeenCalledWith(true);
+			})
+			.then(done);
+		});
+
+		it("should not trigger for elements with hidden parents", function(done) {
+			makeTestForHtml(
+				'<div style="display: none;">' +
+				'  <div in-view="spy($inview)" ' +
+				'       in-view-options="{requireOffsetParent: true}">' +
+				'  </div>' +
+				'</div>'
+			)
+			.then(function (test) {
+				expect(test.spy).not.toHaveBeenCalled();
+			})
+			.then(done);
+		});
+
+		it("should report positive when the parent becomes visible", function(done) {
+			makeTestForHtml(
+				'<div style="display: none;">' +
+				'  <div in-view="spy($inview)" ' +
+				'       in-view-options="{requireOffsetParent: true}">' +
+				'  </div>' +
+				'</div>'
+			)
+			.then(function (test) {
+				expect(test.spy).not.toHaveBeenCalled();
+				test.element.removeAttr('style');
+				angular.element(window).triggerHandler('click');
+				return test;
+			})
+			.then(lazyWait(100))
+			.then(function (test) {
+				expect(test.spy.calls.count()).toEqual(1);
+				expect(test.spy).toHaveBeenCalledWith(true);
+			})
+			.then(done);
+		});
+
+		it("should report negative when the parent becomes hidden", function(done) {
+			makeTestForHtml(
+				'<div>' +
+				'  <div in-view="spy($inview)" ' +
+				'       in-view-options="{requireOffsetParent: true}">' +
+				'  </div>' +
+				'</div>'
+			)
+			.then(function (test) {
+				test.spy.calls.reset();
+				test.element.attr('style', 'display: none;');
+				angular.element(window).triggerHandler('click');
+				return test;
+			})
+			.then(lazyWait(100))
+			.then(function (test) {
+				expect(test.spy.calls.count()).toEqual(1);
+				expect(test.spy).toHaveBeenCalledWith(false);
+			})
+			.then(done);
+		});
+	})
+
 	// A test object has the properties:
 	//
 	//  - `element`: An angular element inserted in the test page
@@ -405,5 +478,4 @@ describe("angular-inview", function() {
 			});
 		}
 	}
-
 });
