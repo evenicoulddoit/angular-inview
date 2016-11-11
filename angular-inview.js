@@ -73,6 +73,13 @@ function inViewDirective ($parse) {
       if (options.throttle) {
         viewportEventSignal = viewportEventSignal.throttle(options.throttle);
       }
+      // Apply a default short throttle when requiring an offset parent.
+      // This should allow time for a digest cycle to take place which may
+      // be significant if the event triggered changed the visiblity of the
+      // offset parent
+      else if (options.requireOffsetParent) {
+        viewportEventSignal = viewportEventSignal.throttle(100);
+      }
 
       // Map to viewport intersection and in-view informations
       var inviewInfoSignal = viewportEventSignal

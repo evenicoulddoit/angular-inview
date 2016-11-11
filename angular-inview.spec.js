@@ -344,7 +344,7 @@ describe("angular-inview", function() {
 				angular.element(window).triggerHandler('click');
 				return test;
 			})
-			.then(lazyWait(100))
+			.then(lazyWait(150))
 			.then(function (test) {
 				expect(test.spy.calls.count()).toEqual(1);
 				expect(test.spy).toHaveBeenCalledWith(true);
@@ -366,7 +366,7 @@ describe("angular-inview", function() {
 				angular.element(window).triggerHandler('click');
 				return test;
 			})
-			.then(lazyWait(100))
+			.then(lazyWait(150))
 			.then(function (test) {
 				expect(test.spy.calls.count()).toEqual(1);
 				expect(test.spy).toHaveBeenCalledWith(false);
